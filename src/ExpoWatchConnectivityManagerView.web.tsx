@@ -1,10 +1,8 @@
 import * as React from 'react';
 
-import { ExpoWatchConnectivityManagerViewProps } from './ExpoWatchConnectivityManager.types';
+import { WatchConnectivityManagerViewProps } from './types';
 
-export default function ExpoWatchConnectivityManagerView(
-  props: ExpoWatchConnectivityManagerViewProps
-) {
+export default function ExpoWatchConnectivityManagerView(props: WatchConnectivityManagerViewProps) {
   return (
     <div>
       <iframe

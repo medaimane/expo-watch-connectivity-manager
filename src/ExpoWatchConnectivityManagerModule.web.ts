@@ -1,13 +1,16 @@
 import {NativeModule, registerWebModule} from 'expo';
-import {ExpoWatchConnectivityManagerModuleEvents} from './ExpoWatchConnectivityManager.types';
+import {WatchConnectivityManagerModuleEvents, WCCommandReply} from './types';
 
-class ExpoWatchConnectivityManagerModule extends NativeModule<ExpoWatchConnectivityManagerModuleEvents> {
-  PI = Math.PI;
-  async setValueAsync(value: string): Promise<void> {
-    this.emit('onChange', {value});
+class ExpoWatchConnectivityManagerModule extends NativeModule<WatchConnectivityManagerModuleEvents> {
+  isSupported = false;
+  initialize(): void {
+    this.emit('onInitialized', {status: 'Web is ready'});
   }
-  hello() {
-    return 'Hello world! 👋';
+  isPhoneReachable(): Promise<boolean> {
+    return Promise.resolve(false);
+  }
+  sendMessage(): Promise<WCCommandReply> {
+    return Promise.reject(new Error('Oops, Not supported on web!'));
   }
 }
 

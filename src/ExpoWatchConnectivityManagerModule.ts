@@ -1,9 +1,11 @@
 import {NativeModule, requireNativeModule} from 'expo';
+import {WCCommandReply, WCMessage} from './types';
 
 declare class ExpoWatchConnectivityManagerModule extends NativeModule {
-  PI: number;
-  hello(): string;
-  setValueAsync(value: string): Promise<void>;
+  isSupported: boolean;
+  initialize(): string;
+  isPhoneReachable(): Promise<boolean>;
+  sendMessage(message: WCMessage): Promise<WCCommandReply>;
 }
 
 // This call loads the native module object from the JSI.

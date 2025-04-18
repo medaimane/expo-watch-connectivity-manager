@@ -1,14 +1,12 @@
 import { requireNativeView } from 'expo';
 import * as React from 'react';
 
-import { ExpoWatchConnectivityManagerViewProps } from './ExpoWatchConnectivityManager.types';
+import { WatchConnectivityManagerViewProps } from './types';
 
-const NativeView: React.ComponentType<ExpoWatchConnectivityManagerViewProps> = requireNativeView(
+const NativeView: React.ComponentType<WatchConnectivityManagerViewProps> = requireNativeView(
   'ExpoWatchConnectivityManager',
 );
 
-export default function ExpoWatchConnectivityManagerView(
-  props: ExpoWatchConnectivityManagerViewProps,
-) {
+export default function ExpoWatchConnectivityManagerView(props: WatchConnectivityManagerViewProps) {
   return <NativeView {...props} />;
 }
