@@ -1,11 +1,10 @@
-import { registerWebModule, NativeModule } from 'expo';
-
-import { ExpoWatchConnectivityManagerModuleEvents } from './ExpoWatchConnectivityManager.types';
+import {NativeModule, registerWebModule} from 'expo';
+import {ExpoWatchConnectivityManagerModuleEvents} from './ExpoWatchConnectivityManager.types';
 
 class ExpoWatchConnectivityManagerModule extends NativeModule<ExpoWatchConnectivityManagerModuleEvents> {
   PI = Math.PI;
   async setValueAsync(value: string): Promise<void> {
-    this.emit('onChange', { value });
+    this.emit('onChange', {value});
   }
   hello() {
     return 'Hello world! 👋';

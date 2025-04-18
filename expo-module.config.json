@@ -1,17 +1,9 @@
 {
-  "platforms": [
-    "apple",
-    "android",
-    "web"
-  ],
+  "platforms": ["apple", "android", "web"],
   "apple": {
-    "modules": [
-      "ExpoWatchConnectivityManagerModule"
-    ]
+    "modules": ["ExpoWatchConnectivityManagerModule"]
   },
   "android": {
-    "modules": [
-      "expo.modules.watchconnectivitymanager.ExpoWatchConnectivityManagerModule"
-    ]
+    "modules": ["expo.modules.watchconnectivitymanager.ExpoWatchConnectivityManagerModule"]
   }
 }

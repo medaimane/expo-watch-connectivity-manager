@@ -1,4 +1,4 @@
-import type { StyleProp, ViewStyle } from 'react-native';
+import type {StyleProp, ViewStyle} from 'react-native';
 
 export type OnLoadEventPayload = {
   url: string;
@@ -14,6 +14,6 @@ export type ChangeEventPayload = {
 
 export type ExpoWatchConnectivityManagerViewProps = {
   url: string;
-  onLoad: (event: { nativeEvent: OnLoadEventPayload }) => void;
+  onLoad: (event: {nativeEvent: OnLoadEventPayload}) => void;
   style?: StyleProp<ViewStyle>;
 };
