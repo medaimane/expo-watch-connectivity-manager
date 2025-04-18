@@ -1,31 +1,82 @@
-import { useEvent } from 'expo';
-import ExpoWatchConnectivityManager, { ExpoWatchConnectivityManagerView } from 'expo-watch-connectivity-manager';
-import { Button, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import { ExpoWatchConnectivityManagerView } from 'expo-watch-connectivity-manager';
+import { useCallback } from 'react';
+import {
+  ActivityIndicator,
+  Button,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+
+import { useMotionDataTracker } from './hooks/useMotionDataTracker';
 
 export default function App() {
-  const onChangePayload = useEvent(ExpoWatchConnectivityManager, 'onChange');
+  const {
+    tracking,
+    trackingStartedAt,
+    trackingCompletedAt,
+    trackingData,
+    connectedWatch,
+    isReachable,
+    checkWCReachability,
+    startTracking,
+    stopTracking,
+  } = useMotionDataTracker();
+
+  const onPress = useCallback(async () => {
+    if (tracking) {
+      await stopTracking();
+      return;
+    }
+
+    await startTracking();
+  }, [tracking, startTracking, stopTracking]);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView style={styles.container}>
-        <Text style={styles.header}>Module API Example</Text>
-        <Group name="Constants">
-          <Text>{ExpoWatchConnectivityManager.PI}</Text>
+        <Text style={styles.header}>Watch Connectivity Module Usecase Example</Text>
+        <Group name="Connected Watch">
+          <Text>{connectedWatch}</Text>
         </Group>
-        <Group name="Functions">
-          <Text>{ExpoWatchConnectivityManager.hello()}</Text>
+        <Group name="Phone Reachable?">
+          <Text onPress={checkWCReachability}>{isReachable ? 'Yes' : 'No'}</Text>
         </Group>
-        <Group name="Async functions">
-          <Button
-            title="Set value"
-            onPress={async () => {
-              await ExpoWatchConnectivityManager.setValueAsync('Hello from JS!');
-            }}
-          />
+        <Group name="Track Motions">
+          <View style={styles.row}>
+            {tracking && <ActivityIndicator />}
+            <Button title={tracking ? 'Stop Tracking' : 'Start Tracking'} onPress={onPress} />
+          </View>
         </Group>
-        <Group name="Events">
-          <Text>{onChangePayload?.value}</Text>
+        {trackingStartedAt && (
+          <Group name="Tracking Started At">
+            <Text>{trackingStartedAt.toISOString()}</Text>
+          </Group>
+        )}
+        {trackingCompletedAt && (
+          <Group name="Tracking Completed At">
+            <Text>{trackingCompletedAt.toISOString()}</Text>
+          </Group>
+        )}
+
+        <Group name="Tracked Data">
+          {trackingData.length === 0 ? (
+            <Text>Empty.</Text>
+          ) : (
+            trackingData.map((d) => (
+              <Group key={d.timestamp} name="User Acceleration">
+                <View style={styles.row}>
+                  <Text>X: {d.userAcceleration.x}</Text>
+                  <Text>Y: {d.userAcceleration.y}</Text>
+                  <Text>Z: {d.userAcceleration.z}</Text>
+                </View>
+              </Group>
+            ))
+          )}
         </Group>
+
         <Group name="Views">
           <ExpoWatchConnectivityManagerView
             url="https://www.example.com"
@@ -47,7 +98,7 @@ function Group(props: { name: string; children: React.ReactNode }) {
   );
 }
 
-const styles = {
+const styles = StyleSheet.create({
   header: {
     fontSize: 30,
     margin: 20,
@@ -70,4 +121,11 @@ const styles = {
     flex: 1,
     height: 200,
   },
-};
+  row: {
+    gap: 8,
+    padding: 8,
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+});
