@@ -1,48 +1,48 @@
 import ExpoModulesCore
 
 public class ExpoWatchConnectivityManagerModule: Module {
-  // Each module class must implement the definition function. The definition consists of components
-  // that describes the module's functionality and behavior.
-  // See https://docs.expo.dev/modules/module-api for more details about available components.
+  private let manager = ExpoWatchConnectivityManager()
+
   public func definition() -> ModuleDefinition {
-    // Sets the name of the module that JavaScript code will use to refer to the module. Takes a string as an argument.
-    // Can be inferred from module's class name, but it's recommended to set it explicitly for clarity.
-    // The module will be accessible from `requireNativeModule('ExpoWatchConnectivityManager')` in JavaScript.
-    Name("ExpoWatchConnectivityManager")
+    Name("WCManager")
 
-    // Sets constant properties on the module. Can take a dictionary or a closure that returns a dictionary.
-    Constants([
-      "PI": Double.pi
-    ])
+    Constants(["isSupported": self.manager.isSupported()])
 
-    // Defines event names that the module can send to JavaScript.
-    Events("onChange")
+    Events("onInitialized", "onWatchMessageReceived", "onPhoneReachabilityChange")
 
-    // Defines a JavaScript synchronous function that runs the native code on the JavaScript thread.
-    Function("hello") {
-      return "Hello world! 👋"
+    Function("initialize") {
+        manager.setSendEvent(sendEventCallback: self.sendEvent)
+        self.sendEvent("onPhoneInitialized", ["status": "Phone is ready"])
     }
 
-    // Defines a JavaScript function that always returns a Promise and whose native code
-    // is by default dispatched on the different thread than the JavaScript runtime runs on.
-    AsyncFunction("setValueAsync") { (value: String) in
-      // Send an event to JavaScript.
-      self.sendEvent("onChange", [
-        "value": value
-      ])
-    }
-
-    // Enables the module to be used as a native view. Definition components that are accepted as part of the
-    // view definition: Prop, Events.
-    View(ExpoWatchConnectivityManagerView.self) {
-      // Defines a setter for the `url` prop.
-      Prop("url") { (view: ExpoWatchConnectivityManagerView, url: URL) in
-        if view.webView.url != url {
-          view.webView.load(URLRequest(url: url))
+    AsyncFunction("isPhoneReachable") { (promise: Promise) in
+        guard manager.isReachable() else {
+            promise.reject("ERROR", "[Phone] Session unreachable!")
+            return
         }
-      }
 
-      Events("onLoad")
+        promise.resolve(manager.isReachable())
+    }
+
+    AsyncFunction("sendMessage") { (message: [String: Any], promise: Promise) in
+        guard manager.isReachable() else {
+            promise.reject("ERROR", "[Phone] Session unreachable!")
+            return
+        }
+
+        manager.sendMessage(message, replyHandler: { reply in promise.resolve(reply) }, errorHandler: { error in promise.reject("ERROR", error.localizedDescription)})
+    }
+
+    // Enables the module to be used as a native view.
+    View(ExpoWatchConnectivityManagerView.self) {
+        // Defines a setter for the `url` prop.
+        Prop("url") { (view: ExpoWatchConnectivityManagerView, url: URL) in
+            if view.webView.url != url {
+                view.webView.load(URLRequest(url: url))
+            }
+        }
+
+        Events("onLoad")
     }
   }
 }
