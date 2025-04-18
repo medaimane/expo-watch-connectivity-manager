@@ -1,7 +1,7 @@
 import {NativeModule, requireNativeModule} from 'expo';
-import {WCCommandReply, WCMessage} from './types';
+import {WatchConnectivityManagerModuleEvents, WCCommandReply, WCMessage} from './types';
 
-declare class ExpoWatchConnectivityManagerModule extends NativeModule {
+declare class ExpoWatchConnectivityManagerModule extends NativeModule<WatchConnectivityManagerModuleEvents> {
   isSupported: boolean;
   initialize(): string;
   isPhoneReachable(): Promise<boolean>;

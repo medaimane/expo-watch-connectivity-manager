@@ -10,7 +10,7 @@ export type WCSensorType = 'all' | 'accelerometer' | 'device-motion' | 'gyroscop
 type WCStartMessage = {
   command: 'start';
   sensor: WCSensorType;
-  prayer: string;
+  info: string;
 };
 
 export type WCMessage =
